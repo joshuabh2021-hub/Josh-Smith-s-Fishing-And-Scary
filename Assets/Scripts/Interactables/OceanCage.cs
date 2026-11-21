@@ -4,7 +4,8 @@ public class OceanCage : MonoBehaviour, IInteractable
 {
     public void Interact()
     {
-        Debug.Log("change to fishin minigame here");
+        GameManager.instance.BaseToFishing();
+        Debug.Log("changing to fishing level");
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
