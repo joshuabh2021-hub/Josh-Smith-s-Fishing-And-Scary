@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -55,18 +56,40 @@ public class GameManager : MonoBehaviour
     {
         float spawnChance = 1;
         bool isSpawning = true;
+        GameObject mainFish = null;
         while (isSpawning) // creates clusters of fish
         {
-            SpawnFish();
-            spawnChance *= 1 - 0.125f; // spawn chance decreases as more fish are spawned
+            if(mainFish == null)
+            {
+                mainFish = SpawnFish();
+            }
+            else
+            {
+                SpawnFish(mainFish);
+            }
+            
+            spawnChance *= 1 - 0.99f; // spawn chance decreases as more fish are spawned
             isSpawning = Random.Range(0f,1f) <= spawnChance; // if spawn chance is lower than random number, stop spawning fish for this cluster
         }
     }
 
-    void SpawnFish() // spawns a singular fish. type is based off of depth
+    GameObject SpawnFish() // spawns a singular fish. type is based off of depth
     {
-        Debug.Log("Spawned"); 
-
+        Vector2 randomPosition =  Camera.main.ScreenToWorldPoint(new Vector2(Random.Range(0,Screen.width), 0));
+        GameObject randomlySelectedFish = fishesToSpawn[Random.Range(0,fishesToSpawn.Count())];
+        GameObject fishInstance = Instantiate(randomlySelectedFish);
+        fishInstance.transform.position = randomPosition;
+        return fishInstance;
+    }
+    GameObject SpawnFish(GameObject mainFish) // spawns a singular fish. type is based off of depth
+    {
+        mainFish.transform.Rotate(0,0,Random.Range(0,360));
+        Vector2 randomPosition =  mainFish.transform.position + mainFish.transform.up * Random.Range(-10f,10f);
+        GameObject randomlySelectedFish = fishesToSpawn[Random.Range(0,fishesToSpawn.Count())];
+        GameObject fishInstance = Instantiate(randomlySelectedFish);
+        fishInstance.transform.position = randomPosition;
+        mainFish.transform.up = Vector2.up;
+        return fishInstance;
     }
 
     public void BaseToFishing()
