@@ -37,4 +37,9 @@ public class Fish : MonoBehaviour
         randomMovementSpeed = Random.Range(0.25f, 2);
         moveDirection = randomNumber == 0 ? Vector2.right : Vector2.left;
     }
+
+
+
+    //TODO 
+    //ADD DIFFERENT FISH BEHAVIOURS (SOME ARE FAST AND SPERATIC)
 }
