@@ -27,16 +27,21 @@ public class PlayerHook : MonoBehaviour
     
     void LateUpdate()
     {
-        if(fishingCamera.WorldToViewportPoint(transform.position).x > 0.7f )
+        if(fishingCamera.WorldToViewportPoint(transform.position).x > 0.7f && fishingCamera.transform.position.x < xBound)
         {
-            float cameraHookDifference = fishingCamera.WorldToViewportPoint(transform.position).x - 0.7f;
-            fishingCamera.transform.position = fishingCamera.ViewportToWorldPoint(new Vector2(0.5f + cameraHookDifference ,0.5f));
+            PullCameraToHook(0.7f);
         }
-        if(fishingCamera.WorldToViewportPoint(transform.position).x < 0.3f )
+        if(fishingCamera.WorldToViewportPoint(transform.position).x < 0.3f && fishingCamera.transform.position.x > -xBound)
         {
-            float cameraHookDifference = fishingCamera.WorldToViewportPoint(transform.position).x - 0.3f;
-            fishingCamera.transform.position = fishingCamera.ViewportToWorldPoint(new Vector2(0.5f + cameraHookDifference ,0.5f));
+            PullCameraToHook(0.3f);
         }
+    }
+
+    void PullCameraToHook(float xViewportCoordinate)
+    {
+        float cameraHookDifference = fishingCamera.WorldToViewportPoint(transform.position).x - xViewportCoordinate;
+        Vector3 newCameraPosition = fishingCamera.ViewportToWorldPoint(new Vector2(0.5f + cameraHookDifference ,0.5f));
+        fishingCamera.transform.position = new Vector3(newCameraPosition.x, 0, fishingCamera.transform.position.z);
     }
 
     void MoveThroughRotation() // needs more testing, this feels clunky as of right now
