@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private GameObject homeBaseLevel;
     [SerializeField] private GameObject fishingLevel;
+    [SerializeField] private Rigidbody2D fishingWorldSpace;
     [SerializeField] private GameObject preppingLevel;
     public static GameManager instance;
 
@@ -16,6 +18,8 @@ public class GameManager : MonoBehaviour
 
     private float depth = 0; 
     [SerializeField] private GameObject[] fishesToSpawn;
+
+    [SerializeField] private ParalaxBackground[] backGrounds;
     [SerializeField] private float timeBetweenSpawns = 5;
     float spawnTimer = 0;
 
@@ -50,6 +54,20 @@ public class GameManager : MonoBehaviour
         {
             HandleFishing();
         }
+
+    }
+    void FixedUpdate()
+    {
+        HandleBackgrounds();
+    }
+
+    void HandleBackgrounds()
+    {
+        foreach(ParalaxBackground background in backGrounds)
+        {
+            Vector2 position = new Vector2(-Camera.main.transform.position.x, fishingWorldSpace.transform.position.y);
+            background.transform.position = position / background.movementMagnitude;
+        }
     }
 
     void spawnCluster()
@@ -78,7 +96,9 @@ public class GameManager : MonoBehaviour
         Vector2 randomPosition =  Camera.main.ScreenToWorldPoint(new Vector2(Random.Range(0,Screen.width), 0));
         GameObject randomlySelectedFish = fishesToSpawn[Random.Range(0,fishesToSpawn.Count())];
         GameObject fishInstance = Instantiate(randomlySelectedFish);
+        fishInstance.transform.SetParent(fishingWorldSpace.transform);
         fishInstance.transform.position = randomPosition;
+        
         return fishInstance;
     }
     GameObject SpawnFish(GameObject mainFish) // spawns a singular fish. type is based off of depth
@@ -104,6 +124,12 @@ public class GameManager : MonoBehaviour
     public void AddFishToBucket(Fish fishToAdd)
     {
         caughtFish.Add(fishToAdd); // adds the fish game object to the list of caught fish. 
+    }
+
+    public void MoveGameWorldWithArrow(float amountToMove)
+    {
+        fishingWorldSpace.transform.position -= new Vector3(0,amountToMove);
+
     }
 
 
